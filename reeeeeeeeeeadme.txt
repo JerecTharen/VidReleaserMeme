@@ -1,0 +1,30 @@
+REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+Fine, you want a readme you'll get a readme. Grab you're crack pipe, you'll need it loser.
+
+--Overview--
+Was heading to bed one night after binging a ton of Michael Reeves videos and was thinking about how I wasn't
+able to ruin the comment section with bad robot ideas (because I don't have any). Then it hit me like a YouTube
+buddy fired out of a confetti canon - I had plenty of bad programming ideas.
+
+However, I realized that it was just too easy to ignore a YouTube comment. No way was my bad ideas going to end
+up in the idea shredder. You know what's not easy to ignore? A pull request. If a pull request is submitted
+against some doo-doo repository he'll get GitHub notifications!
+
+And so vid-reeeeeeeeeeeeelease was born.
+
+--Objective--
+It's well known that the video release schedule is more random than quantum mechanics or radio active decay, 
+but what if the release schedule and video content were made from quantum mechanics? Well, that's the objective.
+
+1. Find random number generation on internet based off of quantum mechanics or radio active decay.
+
+2. Create framework to use that randum number generation to decide when next to release a video.
+
+3. Use randum number generation to create the video.
+
+4. Interact with YouTube API to upload said video and release it on the previously generated due date.
+
+
+
+It's over now. Go home. You don't want to read through any more nerd s***
