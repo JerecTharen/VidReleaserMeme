@@ -1,4 +1,5 @@
 ﻿using System;
+using OkayBoomer;
 
 namespace init
 {
@@ -6,7 +7,9 @@ namespace init
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Get ready for some suck");
+            var boomer = new OkayBoomer.OkayBoomer(){};
+            Console.WriteLine($"Number: {boomer.GetNumber()}");
         }
     }
 }
