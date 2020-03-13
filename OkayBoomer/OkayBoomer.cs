@@ -3,8 +3,13 @@ using System.IO;
 using System.Net;
 using System.Globalization;
 
+///<summary>
+/// Contacts the Random Number generation API and manages
+/// the random seed we get from it
+///</summary>
 namespace OkayBoomer
 {
+    //Just used as a return type when the API call is made
     public class BoomerResponse
     {
         public HttpStatusCode StatusCode { get; set; }
@@ -16,22 +21,22 @@ namespace OkayBoomer
         private readonly string _baseURL = "https://www.fourmilab.ch";
         private readonly string _path = "/cgi-bin/Hotbits.api?";
         private readonly string _fullURL;
-        public  readonly string Seed;
-        public int SeedIndex { get; set; }
+        public  readonly string _Seed;
+        private int SeedIndex { get; set; }
 
         ///<summary>
         /// Get random number from API
         ///</summary>
         public OkayBoomer()
-        {            
+        {
             //Init
             Console.WriteLine("Okay Boomer");
 
             //Only get seed if needed
             if(!File.Exists("./OkayBoomer/seed.txt"))
             {
-                _apikey = File.ReadAllText("./apikey.txt");
-                _fullURL = CreateFullURL();
+                _apikey = File.Exists("./apikey.txt") ? File.ReadAllText("./apikey.txt") : null;
+                _fullURL = CreateFullURL(128, "", !string.IsNullOrEmpty(_apikey));
 
                 //Start Request
                 Console.WriteLine("Requesting number . . .");
@@ -42,13 +47,13 @@ namespace OkayBoomer
                 //If success, set up the random seed
                 if(response.StatusCode == HttpStatusCode.OK)
                 {
-                    Seed = ParseSeed(response.Response);
+                    _Seed = ParseSeed(response.Response);
                     Console.WriteLine($"Yeah, eat it API!");
                 }
             }
             else//just read the file dummy
             {
-                Seed = File.ReadAllText("./OkayBoomer/seed.txt");
+                _Seed = File.ReadAllText("./OkayBoomer/seed.txt");
                 Console.WriteLine("The seed has already been planted in fertile ground!");
             }
         }
@@ -59,7 +64,8 @@ namespace OkayBoomer
         ///</summary>
         public string CreateFullURL(int nbytes = 128, string format = "", bool hasKey = false)
         {
-            var getForm = $"nbytes={nbytes}&fmt=hex&npass=1&lpass=8&pwtype=3&apikey={(hasKey ? _apikey : "")}&pseudo={(hasKey ? "" : "pseudo")}";
+            //https://www.fourmilab.ch/cgi-bin/Hotbits.api?nbytes=128&fmt=hex&npass=1&lpass=8&pwtype=3&apikey=HB10g6Zcj3Jg9yqDYPu6MFeetKF
+            var getForm = $"nbytes={nbytes}&fmt=hex&npass=1&lpass=8&pwtype=3&apikey={(hasKey ? _apikey : "&pseudo=pseudo")}";
             return _baseURL + _path + getForm;
         }
 
@@ -88,6 +94,9 @@ namespace OkayBoomer
         ///<summary>
         /// Need to get stupid hex from stupid html
         /// Saves in a txt file so I don't use up the stupid limited api key
+        ///
+        /// Should probably get the json option and parse the binary it returns
+        /// instead of this crap, but garbage idea deserves garbage methodology
         ///</summary>
         public string ParseSeed(string webResponse)
         {
@@ -96,8 +105,8 @@ namespace OkayBoomer
             var seedWithNewLines = webResponse
                 .Split("<pre>")[1]
                 .Split("</pre>")[0];
-            
-            //Get rid of newline characters because they're stupid and I can't parse them
+
+            //Get rid of newline characters because they're stupid and I can't parse them into random numbers
             var seed = seedWithNewLines.Substring(1, seedWithNewLines.Length - 2);
 
             //Save the string in a good'ole .txt file
@@ -109,15 +118,39 @@ namespace OkayBoomer
         ///<summary>
         /// Plan is to go 10 hex digits from the seed at a time and try parse those into an int
         ///</summary>
-        public int GetNumber()
+        public int GetNumber(int digits = 0)
         {
             int randomNumber;
             //Take one character and get a number 0-16
-            bool success = Int32.TryParse(Seed.Substring(1, 1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out randomNumber);
-            
+            bool success = Int32.TryParse(_Seed.Substring(1, digits), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out randomNumber);
+
             // *Snickers*
             //Dubugging needs to be fun somehow right?
             return success ? randomNumber : 69;
+        }
+
+        ///<summary>
+        /// Uglyness. Apparently Math.Floor can only accept decimals, not ints
+        /// so I had to do a crap ton of conversions
+        ///
+        /// Be that as it may, this method will take a number:poop and return
+        /// a random number between 1 and poop
+        ///</summary>
+        public int GetRandom(int maxNum)
+        {
+          //Determine how many numbers we need
+          decimal dMaxNum = Convert.ToDecimal(maxNum);
+          int digits = Decimal.ToInt32(Math.Floor(dMaxNum/16m));
+
+          decimal num = Convert.ToDecimal(GetNumber(4));
+
+          if(num != 69)
+          {
+            int rand = Decimal.ToInt32(Math.Floor((num/65535m) * dMaxNum));
+            return rand == 0 ? 1 : rand;
+          }
+          else
+            return 69;
         }
     }
 }

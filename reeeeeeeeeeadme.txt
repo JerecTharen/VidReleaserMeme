@@ -7,23 +7,27 @@ Was heading to bed one night after binging a ton of Michael Reeves videos and wa
 able to ruin the comment section with bad robot ideas (because I don't have any). Then it hit me like a YouTube
 buddy fired out of a confetti canon - I had plenty of bad programming ideas.
 
-However, I realized that it was just too easy to ignore a YouTube comment. No way was my bad ideas going to end
+However, I realized that it was just too easy to ignore a YouTube comment. No way were my bad ideas going to end
 up in the idea shredder. You know what's not easy to ignore? A pull request. If a pull request is submitted
 against some doo-doo repository he'll get GitHub notifications!
 
 And so vid-reeeeeeeeeeeeelease was born.
 
 --Objective--
-It's well known that the video release schedule is more random than quantum mechanics or radio active decay, 
-but what if the release schedule and video content were made from quantum mechanics? Well, that's the objective.
+It's well known that the video release schedule is more random than quantum mechanics or radioactive decay, 
+but what if the release schedule and video content were made from radioactive decay? Well, that's the objective.
 
-1. Find random number generation on internet based off of quantum mechanics or radio active decay.
+1. Find random number generation on internet based off of quantum mechanics or radioactive decay.
+    Done, courtesy of Hotbits I can get a hexidecimal string to seed my random number generation.
+    Request an API key from them and put it into apikey.txt to get true radioactive decay. Without
+    a key, the seed is just an algorithm that uses the radioactive decay to help a little.
+    https://www.fourmilab.ch/hotbits/
 
 2. Create framework to use that randum number generation to decide when next to release a video.
 
-3. Use randum number generation to create the video.
+3. Interact with YouTube API to upload said video and release it on the previously generated due date.
 
-4. Interact with YouTube API to upload said video and release it on the previously generated due date.
+4. Use randum number generation to create the video. 
 
 
 
