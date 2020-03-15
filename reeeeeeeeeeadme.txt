@@ -14,7 +14,7 @@ against some doo-doo repository he'll get GitHub notifications!
 And so vid-reeeeeeeeeeeeelease was born.
 
 --Objective--
-It's well known that the video release schedule is more random than quantum mechanics or radioactive decay, 
+It's well known that the video release schedule is more random than quantum mechanics or radioactive decay,
 but what if the release schedule and video content were made from radioactive decay? Well, that's the objective.
 
 1. Find random number generation on internet based off of quantum mechanics or radioactive decay.
@@ -27,7 +27,9 @@ but what if the release schedule and video content were made from radioactive de
 
 3. Interact with YouTube API to upload said video and release it on the previously generated due date.
 
-4. Use randum number generation to create the video. 
+4. Use randum number generation to create the video.
+
+--Dependencies--
 
 
 
