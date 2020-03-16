@@ -146,8 +146,9 @@ namespace OkayBoomer
 
           if(num != 69)
           {
+            //65535 is maximum value of 4 hex digits
             int rand = Decimal.ToInt32(Math.Floor((num/65535m) * dMaxNum));
-            return rand == 0 ? 1 : rand;
+            return rand;
           }
           else
             return 69;
