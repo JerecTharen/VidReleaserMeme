@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Diagnostics;
 using OkayBoomer;
 
@@ -23,7 +24,7 @@ namespace nightmare_nightmare_nightmare
     private int iterator {get; set;}
     private OkayBoomer.OkayBoomer okayBoomer {get; set;}
 
-    public Nightmares(int finalDuration = 300, string inputFolder = "", string outputFolder = "", string finalProductLocation = "", int clipDuration = 3, string videoType = ".mov")
+    public Nightmares(int finalDuration = 12, string inputFolder = "", string outputFolder = "", string finalProductLocation = "", int clipDuration = 3, string videoType = ".mov")
     {
       Console.WriteLine("Nightmare Nightmare Nightmare");
 
@@ -35,7 +36,7 @@ namespace nightmare_nightmare_nightmare
       _videoType = videoType;
       _finalDuration = finalDuration;
       okayBoomer = new OkayBoomer.OkayBoomer(){};
-      
+
       GetClips();
 
       Console.WriteLine("Nightmare over, but you'll never sleep the same again.");
@@ -54,14 +55,22 @@ namespace nightmare_nightmare_nightmare
       string[] inputs = Directory.GetFiles(_inputFolder, "*" + _videoType);
       int numInputs = inputs.Length;
 
+      //List to keep track of clips to add to txt file later
+      List<string> finishedClips = new List<string>(){};
+
       Console.WriteLine($"About to create {numClips} clips");
 
       for(int i = 0; i < numClips; i++)
       {
-        CreateClip(inputs[okayBoomer.GetRandom(numInputs)], $"clip{i}");
+        finishedClips.Add(CreateClip(inputs[okayBoomer.GetRandom(numInputs)], $"clip{i}"));
       }
 
       Console.WriteLine($"Created {numClips} clips at {_outputFolder}");
+
+      //Add clips to a txt file
+      File.WriteAllLines("./Vids/AllClips.txt", finishedClips);
+
+      Console.WriteLine("Gott'im");
     }
 
     ///<summary>
@@ -69,10 +78,10 @@ namespace nightmare_nightmare_nightmare
     /// ffmpeg, so instead I just searched around on google
     /// for some bash commands to do what I want and then
     /// pasted them here into the ShellHelper I stole
-    /// 
+    ///
     /// I have no idea what all the flags on these commands do or what these commands mean
     ///</summary>
-    public void CreateClip(string inputFileName, string outputFileName)
+    public string CreateClip(string inputFileName, string outputFileName)
     {
       outputFileName = _outputFolder + "/" + outputFileName;
 
@@ -91,12 +100,11 @@ namespace nightmare_nightmare_nightmare
       }
       else
         start = 0;
-      
-      //Actually go and create the clip now
-      ShellHelper.Bash($"ffmpeg -ss {start} -i {_inputFolder + "/" + inputFileName} -t {_clipDuration} -c copy {_outputFolder + "/" + outputFileName}");
 
-      //Bash command to put them together later needs them in a text file
-      File.WriteAllText("./Vids/AllClips.txt", outputFileName);
+      //Actually go and create the clip now
+      ShellHelper.Bash($"ffmpeg -ss {start} -i {inputFileName} -t {_clipDuration} -c copy {outputFileName + _videoType}");
+
+      return outputFileName;
     }
 
     public string DetectAndCreateDir(string dir)
