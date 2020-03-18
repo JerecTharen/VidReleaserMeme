@@ -24,7 +24,7 @@ namespace nightmare_nightmare_nightmare
     private int iterator {get; set;}
     private OkayBoomer.OkayBoomer okayBoomer {get; set;}
 
-    public Nightmares(int finalDuration = 12, string inputFolder = "", string outputFolder = "", string finalProductLocation = "", int clipDuration = 3, string videoType = ".mov")
+    public Nightmares(int finalDuration = 300, string inputFolder = "", string outputFolder = "", string finalProductLocation = "", int clipDuration = 3, string videoType = ".mov")
     {
       Console.WriteLine("Nightmare Nightmare Nightmare");
 
@@ -58,10 +58,11 @@ namespace nightmare_nightmare_nightmare
       //List to keep track of clips to add to txt file later
       List<string> finishedClips = new List<string>(){};
 
-      Console.WriteLine($"About to create {numClips} clips");
+      Console.WriteLine($"About to create {numClips} clips from {numInputs} videos");
 
       for(int i = 0; i < numClips; i++)
       {
+        Console.WriteLine($"i = {i}, numInputs = {numInputs}, inputs = {inputs}");
         finishedClips.Add(CreateClip(inputs[okayBoomer.GetRandom(numInputs)], $"clip{i}"));
       }
 
@@ -69,6 +70,10 @@ namespace nightmare_nightmare_nightmare
 
       //Add clips to a txt file
       File.WriteAllLines("./Vids/AllClips.txt", finishedClips);
+
+      Console.WriteLine($"Creating final product at: {_finalProductLocation}");
+      //Create Final Product
+      ShellHelper.Bash($"ffmpeg -f concat -safe 0 -i ./Vids/AllClips.txt -c copy {_finalProductLocation}/finalProduct.mov");
 
       Console.WriteLine("Gott'im");
     }
@@ -104,7 +109,8 @@ namespace nightmare_nightmare_nightmare
       //Actually go and create the clip now
       ShellHelper.Bash($"ffmpeg -ss {start} -i {inputFileName} -t {_clipDuration} -c copy {outputFileName + _videoType}");
 
-      return outputFileName;
+      //Return file name in format that concatonation script needs
+      return "file '" + outputFileName.Substring(7, outputFileName.Length-7) + ".mov'";
     }
 
     public string DetectAndCreateDir(string dir)
@@ -115,25 +121,6 @@ namespace nightmare_nightmare_nightmare
         Directory.CreateDirectory(dir);
       }
       return dir;
-    }
-
-    public void Testing123()
-    {
-      int start = 1;
-      int duration = 2;
-      string inputFileName = "./Vids/copy.mov";
-      string outputFileName = "./Vids/output.mov";
-      //Console Command courtesy of Mark Heath from markheath.net
-      string consoleScript = $"ffmpeg -ss {start} -i {inputFileName} -t {duration} -c copy {outputFileName}";
-      //Console Command Courtesy of Stack Overflow user: evilsoup
-      string durationScript = $"ffprobe -i {inputFileName} -show_format -v quiet | sed -n 's/duration=//p'";
-
-      ShellHelper.Bash(consoleScript);
-      Console.WriteLine($"Duration of input: {ShellHelper.Bash(durationScript)}");
-
-      //Command to combine video files listed in a txt
-      //Courtesy of ffmpeg wiki
-      //ffmpeg -f concat -safe 0 -i mylist.txt -c copy output.wav
     }
   }
 }

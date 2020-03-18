@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 ///<summary>
 /// Contacts the Random Number generation API and manages
@@ -17,17 +18,22 @@ namespace OkayBoomer
     }
     public class OkayBoomer
     {
-        private readonly string _apikey;
+        private string _apikey;
         private readonly string _baseURL = "https://www.fourmilab.ch";
         private readonly string _path = "/cgi-bin/Hotbits.api?";
-        private readonly string _fullURL;
-        public  readonly string _Seed;
+        private string _fullURL;
+        private string _Seed;
         private int SeedIndex { get; set; }
+
+        public OkayBoomer()
+        {
+            GetBoomer();
+        }
 
         ///<summary>
         /// Get random number from API
         ///</summary>
-        public OkayBoomer()
+        public void GetBoomer()
         {
             //Init
             Console.WriteLine("Okay Boomer");
@@ -35,25 +41,13 @@ namespace OkayBoomer
             //Only get seed if needed
             if(!File.Exists("./OkayBoomer/seed.txt"))
             {
-                _apikey = File.Exists("./apikey.txt") ? File.ReadAllText("./apikey.txt") : null;
-                _fullURL = CreateFullURL(128, "", !string.IsNullOrEmpty(_apikey));
-
-                //Start Request
-                Console.WriteLine("Requesting number . . .");
-                Console.WriteLine(_fullURL);
-                var response = Get(_fullURL);
-                Console.WriteLine(response.StatusCode == HttpStatusCode.OK ? "Success, that was boring" : "Mission Failed, we'll gett'em next time.");
-
-                //If success, set up the random seed
-                if(response.StatusCode == HttpStatusCode.OK)
-                {
-                    _Seed = ParseSeed(response.Response);
-                    Console.WriteLine($"Yeah, eat it API!");
-                }
+                Bruh();
             }
             else//just read the file dummy
             {
                 _Seed = File.ReadAllText("./OkayBoomer/seed.txt");
+                if(_Seed.Length < 4 )
+                    Bruh();
                 Console.WriteLine("The seed has already been planted in fertile ground!");
             }
         }
@@ -67,6 +61,46 @@ namespace OkayBoomer
             //https://www.fourmilab.ch/cgi-bin/Hotbits.api?nbytes=128&fmt=hex&npass=1&lpass=8&pwtype=3&apikey=HB10g6Zcj3Jg9yqDYPu6MFeetKF
             var getForm = $"nbytes={nbytes}&fmt=hex&npass=1&lpass=8&pwtype=3&apikey={(hasKey ? _apikey : "&pseudo=pseudo")}";
             return _baseURL + _path + getForm;
+        }
+
+        ///<summary>
+        ///                ██                
+        ///              ██                  
+        ///              ██                  
+        ///          ██████████              
+        ///      ██████████████████          
+        ///    ██████████████████████        
+        ///    ██████████████████████        
+        ///  ██████████████████████████      
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒        
+        ///      ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒          
+        ///        ▒▒▒▒▒▒▒▒▒▒▒▒▒▒            
+        ///            ▒▒▒▒▒▒ 
+        ///</summary>
+        public void Bruh()
+        {
+            _apikey = File.Exists("./apikey.txt") ? File.ReadAllText("./apikey.txt") : null;
+            _fullURL = CreateFullURL(128, "", !string.IsNullOrEmpty(_apikey));
+
+            //Start Request
+            Console.WriteLine("Requesting number . . .");
+            Console.WriteLine(_fullURL);
+            var response = Get(_fullURL);
+            Console.WriteLine(response.StatusCode == HttpStatusCode.OK ? "Success, that was boring" : "Mission Failed, we'll gett'em next time.");
+
+            //If success, set up the random seed
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                _Seed = ParseSeed(response.Response);
+                Console.WriteLine($"Yeah, eat it API!");
+            }
         }
 
         ///<summary>
@@ -110,7 +144,7 @@ namespace OkayBoomer
             var seed = seedWithNewLines.Substring(1, seedWithNewLines.Length - 2);
 
             //Save the string in a good'ole .txt file
-            File.WriteAllText("./OkayBoomer/seed.txt", seed);
+            File.WriteAllText("./OkayBoomer/seed.txt", seed.Replace("\r\n", ""));
 
             return seed;
         }
@@ -123,6 +157,13 @@ namespace OkayBoomer
             int randomNumber;
             //Take one character and get a number 0-16
             bool success = Int32.TryParse(_Seed.Substring(1, digits), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out randomNumber);
+
+            //Remove number from seed so we don't repeat it
+            if(success)
+            {
+                _Seed = _Seed.Substring(digits-1, _Seed.Length-digits-1);
+                File.WriteAllText("./OkayBoomer/seed.txt", _Seed);
+            }
 
             // *Snickers*
             //Dubugging needs to be fun somehow right?
@@ -138,6 +179,10 @@ namespace OkayBoomer
         ///</summary>
         public int GetRandom(int maxNum)
         {
+          //Determine if we need to replenish the seed
+          if(_Seed.Length < 4)
+            GetBoomer();
+
           //Determine how many numbers we need
           decimal dMaxNum = Convert.ToDecimal(maxNum);
           int digits = Decimal.ToInt32(Math.Floor(dMaxNum/16m));
