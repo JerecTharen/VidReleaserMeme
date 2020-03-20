@@ -142,9 +142,12 @@ namespace OkayBoomer
 
             //Get rid of newline characters because they're stupid and I can't parse them into random numbers
             var seed = seedWithNewLines.Substring(1, seedWithNewLines.Length - 2);
+            seed = seed.Replace("\r\n", "");
+
+            Console.WriteLine($"Seed Will Be: {seed}");
 
             //Save the string in a good'ole .txt file
-            File.WriteAllText("./OkayBoomer/seed.txt", seed.Replace("\r\n", ""));
+            File.WriteAllText("./OkayBoomer/seed.txt", seed);
 
             return seed;
         }

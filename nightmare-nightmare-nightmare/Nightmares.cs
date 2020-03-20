@@ -62,8 +62,11 @@ namespace nightmare_nightmare_nightmare
 
       for(int i = 0; i < numClips; i++)
       {
-        Console.WriteLine($"i = {i}, numInputs = {numInputs}, inputs = {inputs}");
-        finishedClips.Add(CreateClip(inputs[okayBoomer.GetRandom(numInputs)], $"clip{i}"));
+        int inputsIndex = okayBoomer.GetRandom(numInputs);
+        
+        Console.WriteLine($"i = {i}, numInputs = {numInputs}, inputs = {inputs}, inputs.Length > inputsIndex =  {inputs.Length > inputsIndex}, inputsIndex = {inputsIndex}");
+        if(inputs.Length > inputsIndex)
+          finishedClips.Add(CreateClip(inputs[inputsIndex], $"clip{i}"));
       }
 
       Console.WriteLine($"Created {numClips} clips at {_outputFolder}");

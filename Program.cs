@@ -11,7 +11,9 @@ namespace init
             Console.WriteLine("Get ready for some suck");
             var boomer = new OkayBoomer.OkayBoomer(){};
             Console.WriteLine($"Number: {boomer.GetRandom(150)}");
-            var nightmares = new Nightmares(){};
+            for(var x = 0; x < 100; x++)
+                boomer.GetRandom();
+            //var nightmares = new Nightmares(){};
         }
     }
 }
